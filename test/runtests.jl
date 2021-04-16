@@ -16,7 +16,7 @@ mloss( x1, x2, m ) = sum( abs2, ( m( x1 ) - x2 ) .^ 2 ) / length(x2)
 
     #ensure the gradient moves
     w0 = deepcopy(model.weight)
-    train!(a, b, model, Flux.params(model), loss, Descent(0.01))
+    train_light!(a, b, model, Flux.params(model), loss, Descent(0.01))
     @test sum(abs, w0 - model.weight) > 0.0
 end
 
@@ -29,9 +29,9 @@ end
     @test all(size( model_reverse( a ) ) .== ( 10, 3 ) )
     #ensure the gradient moves
     ps = Flux.params( model_forward )
-    train!(a,b, model_forward, ps, loss, Descent(1.))
+    train_light!(a,b, model_forward, ps, loss, Descent(1.))
     ps = Flux.params( model_reverse )
-    train!(a,b, model_reverse, ps, loss, Descent(1.))
+    train_light!(a,b, model_reverse, ps, loss, Descent(1.))
     @test reverse_grad_tester(original, model_forward, model_reverse)
     #now a 2 layer model check...
     a, b = randn( 10, 6 ), randn( 10 )
@@ -40,9 +40,9 @@ end
     model_reverse = Chain( RevGrad(layer1), RevGrad(layer2) )
     #ensure the gradient moves
     ps = Flux.params( model_forward )
-    train!(a,b, model_forward, ps, loss, Descent(1.))
+    train_light!(a,b, model_forward, ps, loss, Descent(1.))
     ps = Flux.params( model_reverse )
-    train!(a,b, model_reverse, ps, loss, Descent(1.))
+    train_light!(a,b, model_reverse, ps, loss, Descent(1.))
     @test reverse_grad_tester(layer1, model_forward[1], model_reverse[1])
     @test reverse_grad_tester(layer2, model_forward[2], model_reverse[2])
     
@@ -51,9 +51,9 @@ end
     model_forward = Chain( deepcopy(layer1), deepcopy(layer2) )
     model_reverse = RevGrad( model_forward )
     ps = Flux.params( model_forward )
-    train!(a,b, model_forward, ps, loss, Descent(1.))
+    train_light!(a,b, model_forward, ps, loss, Descent(1.))
     ps = Flux.params( model_reverse )
-    train!(a,b, model_reverse, ps, loss, Descent(1.))
+    train_light!(a,b, model_reverse, ps, loss, Descent(1.))
     @test reverse_grad_tester(layer1, model_forward[1], model_reverse[1])
     @test reverse_grad_tester(layer2, model_forward[2], model_reverse[2])
 end
@@ -65,7 +65,7 @@ end
     @test all(size( model( a ) ) .== ( 3, 10 ) )
     #ensure the gradient moves
     w0 = deepcopy(model.weight)
-    train!(a, b, model, Flux.params(model), loss, Descent(0.01))
+    train_light!(a, b, model, Flux.params(model), loss, Descent(0.01))
     @test sum(abs, w0 - model.weight) > 0.0
 end
 
@@ -79,9 +79,9 @@ end
     @test all(size( model_reverse( a ) ) .== ( 3, 10 ) )
     #ensure the gradient moves
     ps = Flux.params( model_forward )
-    train!(a,b, model_forward, ps, loss, Descent(1.))
+    train_light!(a,b, model_forward, ps, loss, Descent(1.))
     ps = Flux.params( model_reverse )
-    train!(a,b, model_reverse, ps, loss, Descent(1.))
+    train_light!(a,b, model_reverse, ps, loss, Descent(1.))
     @test reverse_grad_tester(original,model_forward,model_reverse)
 
     #now a 2 layer model check...
@@ -91,9 +91,9 @@ end
     model_reverse = Chain( RevGrad(layer1), RevGrad(layer2) )
     #ensure the gradient moves
     ps = Flux.params( model_forward )
-    train!(a,b, model_forward, ps, loss, Descent(1.))
+    train_light!(a,b, model_forward, ps, loss, Descent(1.))
     ps = Flux.params( model_reverse )
-    train!(a,b, model_reverse, ps, loss, Descent(1.))
+    train_light!(a,b, model_reverse, ps, loss, Descent(1.))
     @test reverse_grad_tester(layer1, model_forward[1], model_reverse[1])
     @test reverse_grad_tester(layer2, model_forward[2], model_reverse[2])
     
@@ -102,9 +102,9 @@ end
     model_forward = Chain( deepcopy(layer1), deepcopy(layer2) )
     model_reverse = RevGrad( model_forward )
     ps = Flux.params( model_forward )
-    train!(a,b, model_forward, ps, loss, Descent(1.))
+    train_light!(a,b, model_forward, ps, loss, Descent(1.))
     ps = Flux.params( model_reverse )
-    train!(a,b, model_reverse, ps, loss, Descent(1.))
+    train_light!(a,b, model_reverse, ps, loss, Descent(1.))
     @test reverse_grad_tester(layer1, model_forward[1], model_reverse[1])
     @test reverse_grad_tester(layer2, model_forward[2], model_reverse[2])
 end
@@ -145,7 +145,7 @@ end
     @test all(size( model( a ) ) .== ( 1, 20 ) )
     ps = Flux.params( model )
     for _ in 1:100
-        train!( a, b, model, ps, mloss, Descent( 0.01 ) )
+        train_light!( a, b, model, ps, mloss, Descent( 0.01 ) )
     end
     @test sum(abs2, model.weight ) < sum(abs2, weight_i )
 end
@@ -170,7 +170,7 @@ end
     @test all(size( model( a ) ) .== ( 1, 20 ) )
     ps = Flux.params( model )
     for _ in 1:10000
-        train!( a, b, model, ps, mloss, Descent( 0.001 ) )
+        train_light!( a, b, model, ps, mloss, Descent( 0.001 ) )
     end
     #println( model.weight )
     @test argmax( model.weight[:] ) == 5
