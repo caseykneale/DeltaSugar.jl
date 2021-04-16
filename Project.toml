@@ -3,6 +3,10 @@ uuid = "aa57e966-2371-4a63-bded-4a6ccd8a1b12"
 authors = ["Casey Kneale"]
 version = "0.1.0"
 
+[deps]
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
+
 [compat]
 julia = "1.6"
 
