@@ -28,6 +28,14 @@ end
 @adjoint ( a::L2Hook )( θ ) = θ, Δ -> ( nothing, ΔL2( Δ, θ, a.λ ) )
 Base.show(io::IO, l::L2Hook) = print(io, "L2 Penalty (λ = $(l.λ))")
 
+struct LipschitzHook{F} <: GradientHook
+    λ::F
+end
+LipschitzRegularization(Δ, θ, λ) = Δ .+ ( λ .* sum(abs2, θ ) ) 
+( a::LipschitzHook )( x ) = x
+@adjoint ( a::LipschitzHook )( θ ) = θ, Δ -> ( nothing, LipschitzRegularization( Δ, θ, a.λ ) )
+Base.show(io::IO, l::LipschitzHook) = print(io, "Lipschitz Penalty (λ = $(l.λ))")
+
 struct ReverseGradientHook <: GradientHook; end
 ( a::ReverseGradientHook )( x ) = x
 @adjoint ( a::ReverseGradientHook )( θ ) = θ, Δ -> (nothing, -Δ)

@@ -23,7 +23,7 @@ module DeltaSugar
     export PlainChain, TChain
 
     include("Train.jl")
-    export train_light!, smart_yield
+    export train_light!, scalar_yeild, log2_yeild, smart_yield, train_loop!#, early_stop_loop!
 
     #debauchery
     include("BaseOperators.jl")
